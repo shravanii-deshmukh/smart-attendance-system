@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Enrolled Students - Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="glass-panel">
+    <h2 class="mb-4">Enrolled Students</h2>
+
+    <form method="GET" action="{{ url_for('students_list') }}" class="search-bar">
+        <input type="text" name="q" class="form-control" placeholder="Search by Name or PRN..." value="{{ query }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+        {% if query %}
+            <a href="{{ url_for('students_list') }}" class="btn btn-success" style="background: var(--bg-color); border: 1px solid var(--text-muted);">Clear</a>
+        {% endif %}
+    </form>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Sr. No.</th>
+                    <th>PRN</th>
+                    <th>Full Name</th>
+                    <th>Phone</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ student.prn }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.phone }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_student', id=student.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn" style="background: none; border: none; color: var(--danger-color); cursor: pointer; padding: 0; text-decoration: underline;" onclick="return confirm('WARNING: Are you sure you want to completely delete this student? This will also permanently delete all of their attendance records!');">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center" style="padding: 2rem; color: var(--text-muted);">
+                        No students found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

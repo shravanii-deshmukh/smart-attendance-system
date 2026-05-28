@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Enroll Student - Smart Attendance{% endblock %}
+
+{% block content %}
+<h2 class="mb-4 text-center">Enroll New Student</h2>
+
+<div class="glass-panel" style="max-width: 800px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 2rem;">
+    <!-- Left Side: Form -->
+    <div style="flex: 1; min-width: 300px;">
+        <h3 class="mb-4">Student Details</h3>
+        <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" class="form-control" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+            <label for="prn">PRN (Registration Number)</label>
+            <input type="text" id="prn" class="form-control" placeholder="e.g. 12345678" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" class="form-control" placeholder="1234567890" required>
+        </div>
+    </div>
+
+    <!-- Right Side: Camera -->
+    <div style="flex: 1; min-width: 300px; text-align: center;">
+        <h3 class="mb-4">Face Capture</h3>
+        <div class="webcam-container">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+        </div>
+        <button id="capture-btn" class="btn btn-primary" style="width: 100%;">Capture & Enroll</button>
+        <p id="status-message" class="mt-4" style="font-weight: 500;"></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/webcam.js') }}"></script>
+<script>
+    // Define how to get form data for enrollment
+    function getEnrollmentData() {
+        const name = document.getElementById('name').value.trim();
+        const prn = document.getElementById('prn').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        if (!name || !prn || !phone) {
+            showStatus("Please fill out all student details first.", "error");
+            return null;
+        }
+
+        return { name, prn, phone };
+    }
+
+    // Setup Webcam
+    setupWebcam('{{ url_for("api_enroll") }}', '{{ url_for("students_list") }}', getEnrollmentData);
+</script>
+{% endblock %}

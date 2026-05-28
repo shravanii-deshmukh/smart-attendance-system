@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Take Attendance - Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="center-layout" style="flex-direction: column;">
+    <h2 class="mb-4">Face Recognition Attendance</h2>
+    <p class="mb-4 text-muted">Look directly at the camera and click the button to mark your attendance.</p>
+    
+    <div class="glass-panel" style="width: 100%; max-width: 600px; text-align: center;">
+        <div class="form-group" style="text-align: left;">
+            <label for="subject">Select Current Subject / Period</label>
+            <select id="subject" class="form-control" required style="margin-bottom: 1rem; appearance: auto; background-color: var(--glass-bg);">
+                <option value="PECS">PECS (11:30 AM - 12:30 PM)</option>
+                <option value="SE">SE (12:30 PM - 01:30 PM)</option>
+                <option value="AIML">AIML (02:00 PM - 03:00 PM)</option>
+                <option value="DAA">DAA (03:00 PM - 04:00 PM)</option>
+                <option value="CD">CD (04:00 PM - 05:00 PM)</option>
+                <option value="CNA">CNA (05:00 PM - 06:00 PM)</option>
+            </select>
+        </div>
+
+        <div class="webcam-container">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+        </div>
+        
+        <button id="capture-btn" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1.2rem;">
+            Mark Attendance
+        </button>
+        
+        <p id="status-message" class="mt-4" style="font-size: 1.2rem; font-weight: 600; min-height: 30px;"></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/webcam.js') }}"></script>
+<script>
+    // Define how to get the selected subject
+    function getAttendanceData() {
+        const subject = document.getElementById('subject').value;
+        return { subject };
+    }
+
+    // Pass the getAttendanceData callback so the subject is sent
+    setupWebcam('{{ url_for("api_mark_attendance") }}', '{{ url_for("take_attendance") }}', getAttendanceData);
+    
+    // Override the success redirect from webcam.js to just clear the message after 3 seconds
+    const originalShowStatus = showStatus;
+    showStatus = function(msg, type) {
+        originalShowStatus(msg, type);
+        const btn = document.getElementById('capture-btn');
+        if (type === 'success' || type === 'error') {
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerText = "Mark Attendance";
+                if(type === 'success') {
+                    document.getElementById('status-message').innerText = "";
+                }
+            }, 3000);
+        }
+    }
+</script>
+{% endblock %}

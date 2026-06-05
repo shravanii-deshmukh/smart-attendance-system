@@ -13,7 +13,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from models import db, Teacher, Student, Attendance
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_super_secret_key_here'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-dev-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///attendance.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

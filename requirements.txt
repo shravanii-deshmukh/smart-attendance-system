@@ -1,7 +1,9 @@
+gunicorn==21.2.0
 Flask==3.0.3
 Flask-SQLAlchemy==3.1.1
 Flask-Login==0.6.3
-opencv-python==4.9.0.80
+Werkzeug==3.0.3
+opencv-python-headless==4.9.0.80
 numpy==1.26.4
 cmake==3.29.2
 dlib==19.24.4
